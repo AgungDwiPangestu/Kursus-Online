@@ -4,7 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Peserta;
 use App\Models\Kursus;
+use App\Models\User;
+use App\Models\Enrollment;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class PesertaController extends Controller
 {
@@ -35,8 +39,10 @@ class PesertaController extends Controller
      */
     public function create()
     {
-        $kursus = Kursus::all();
-        return view('peserta.create', compact('kursus'));
+        $kursus = Kursus::with('pengajar')->get();
+        // Get users with role peserta
+        $users = User::where('role', 'peserta')->orderBy('name')->get();
+        return view('peserta.create', compact('kursus', 'users'));
     }
 
     /**
@@ -44,16 +50,109 @@ class PesertaController extends Controller
      */
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'kursus_id' => 'required|exists:kursus,id',
-            'nama_peserta' => 'required|string|max:255',
-            'email' => 'required|email'
-        ]);
+        $registrationType = $request->input('registration_type', 'existing');
 
-        Peserta::create($validated);
+        if ($registrationType === 'existing') {
+            // Use existing user
+            $validated = $request->validate([
+                'kursus_id' => 'required|exists:kursus,id',
+                'user_id' => 'required|exists:users,id',
+            ]);
 
-        return redirect()->route('peserta.index')
-            ->with('success', 'Peserta berhasil ditambahkan');
+            $user = User::findOrFail($validated['user_id']);
+
+            // Check if already enrolled
+            $existingEnrollment = Enrollment::where('user_id', $user->id)
+                ->where('kursus_id', $validated['kursus_id'])
+                ->exists();
+
+            if ($existingEnrollment) {
+                return redirect()->back()
+                    ->withInput()
+                    ->with('error', 'User sudah terdaftar di kursus ini!');
+            }
+
+            // Check if peserta record exists
+            $existingPeserta = Peserta::where('email', $user->email)
+                ->where('kursus_id', $validated['kursus_id'])
+                ->exists();
+
+            if ($existingPeserta) {
+                return redirect()->back()
+                    ->withInput()
+                    ->with('error', 'Peserta sudah terdaftar di kursus ini!');
+            }
+
+            DB::beginTransaction();
+            try {
+                // Create peserta record
+                Peserta::create([
+                    'kursus_id' => $validated['kursus_id'],
+                    'nama_peserta' => $user->name,
+                    'email' => $user->email,
+                ]);
+
+                // Create enrollment
+                Enrollment::create([
+                    'user_id' => $user->id,
+                    'kursus_id' => $validated['kursus_id'],
+                    'status' => 'active',
+                ]);
+
+                DB::commit();
+
+                return redirect()->route('peserta.index')
+                    ->with('success', 'Peserta ' . $user->name . ' berhasil didaftarkan ke kursus!');
+            } catch (\Exception $e) {
+                DB::rollBack();
+                return redirect()->back()
+                    ->withInput()
+                    ->with('error', 'Gagal mendaftarkan peserta: ' . $e->getMessage());
+            }
+        } else {
+            // Create new user
+            $validated = $request->validate([
+                'kursus_id' => 'required|exists:kursus,id',
+                'nama_peserta' => 'required|string|max:255',
+                'email' => 'required|email|unique:users,email',
+                'password' => 'required|string|min:8|confirmed',
+            ]);
+
+            DB::beginTransaction();
+            try {
+                // Create user account with peserta role
+                $user = User::create([
+                    'name' => $validated['nama_peserta'],
+                    'email' => $validated['email'],
+                    'password' => Hash::make($validated['password']),
+                    'role' => 'peserta',
+                ]);
+
+                // Create peserta record
+                Peserta::create([
+                    'kursus_id' => $validated['kursus_id'],
+                    'nama_peserta' => $validated['nama_peserta'],
+                    'email' => $validated['email'],
+                ]);
+
+                // Create enrollment
+                Enrollment::create([
+                    'user_id' => $user->id,
+                    'kursus_id' => $validated['kursus_id'],
+                    'status' => 'active',
+                ]);
+
+                DB::commit();
+
+                return redirect()->route('peserta.index')
+                    ->with('success', 'Peserta berhasil ditambahkan! Akun login: ' . $validated['email']);
+            } catch (\Exception $e) {
+                DB::rollBack();
+                return redirect()->back()
+                    ->withInput()
+                    ->with('error', 'Gagal menambahkan peserta: ' . $e->getMessage());
+            }
+        }
     }
 
     /**
@@ -70,7 +169,7 @@ class PesertaController extends Controller
      */
     public function edit(Peserta $peserta)
     {
-        $kursus = Kursus::all();
+        $kursus = Kursus::with('pengajar')->get();
         return view('peserta.edit', compact('peserta', 'kursus'));
     }
 
