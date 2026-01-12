@@ -171,6 +171,178 @@
         @yield('content')
     </div>
 
+    <!-- Footer -->
+    <footer class="footer-custom mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 mb-4 mb-lg-0">
+                    <h5 class="footer-brand">
+                        <i class="bi bi-mortarboard-fill"></i> Kursus Online
+                    </h5>
+                    <p class="footer-text">
+                        Platform pembelajaran online terbaik untuk meningkatkan skill dan karir Anda.
+                        Belajar dari pengajar berpengalaman dengan kurikulum yang terstruktur.
+                    </p>
+                    <div class="social-links">
+                        <a href="https://github.com/agungdwipangestu" target="_blank" class="social-link" title="GitHub"><i class="bi bi-github"></i></a>
+                        <a href="https://linkedin.com/in/agungdwipangestu" target="_blank" class="social-link" title="LinkedIn"><i class="bi bi-linkedin"></i></a>
+                        <a href="https://instagram.com/agung_pangestu960" target="_blank" class="social-link" title="Instagram"><i class="bi bi-instagram"></i></a>
+                        <a href="#" class="social-link" title="Twitter"><i class="bi bi-twitter-x"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-4 mb-4 mb-md-0">
+                    <h6 class="footer-title">Menu</h6>
+                    <ul class="footer-links">
+                        <li><a href="{{ route('home') }}">Beranda</a></li>
+                        <li><a href="{{ route('kursus.index') }}">Kursus</a></li>
+                        <li><a href="{{ route('pengajar.index') }}">Pengajar</a></li>
+                        @auth
+                        <li><a href="{{ route('dashboard') }}">Dashboard</a></li>
+                        @endauth
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-md-4 mb-4 mb-md-0">
+                    <h6 class="footer-title">Teknologi</h6>
+                    <ul class="footer-links">
+                        <li><a href="https://laravel.com" target="_blank">Laravel</a></li>
+                        <li><a href="https://getbootstrap.com" target="_blank">Bootstrap</a></li>
+                        <li><a href="https://php.net" target="_blank">PHP</a></li>
+                        <li><a href="https://mysql.com" target="_blank">MySQL</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-4 col-md-4">
+                    <h6 class="footer-title">Tentang Project</h6>
+                    <p class="footer-text">
+                        <i class="bi bi-building"></i> Universitas Teknologi Digital Indonesia<br>
+                        <i class="bi bi-book"></i> Mata Kuliah: Teknologi Framework<br>
+                        <i class="bi bi-calendar"></i> Semester 5 - Tahun 2026
+                    </p>
+                </div>
+            </div>
+
+            <hr class="footer-divider">
+
+            <div class="row align-items-center">
+                <div class="col-md-6 text-center text-md-start">
+                    <p class="copyright-text mb-0">
+                        © {{ date('Y') }} <strong>Sistem Manajemen Kursus Online</strong>. All rights reserved.
+                    </p>
+                </div>
+                <div class="col-md-6 text-center text-md-end mt-3 mt-md-0">
+                    <p class="credit-text mb-0">
+                        Crafted with <i class="bi bi-heart-fill text-danger"></i> by
+                        <a href="#" class="credit-link">🔫 ApGuns</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <style>
+        .footer-custom {
+            background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #4c1d95 100%);
+            color: white;
+            padding: 60px 0 30px;
+            margin-top: auto;
+        }
+
+        .footer-brand {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 15px;
+        }
+
+        .footer-text {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+            line-height: 1.7;
+        }
+
+        .footer-title {
+            color: white;
+            font-weight: 600;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+        }
+
+        .footer-links {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .footer-links a:hover {
+            color: #a5b4fc;
+            padding-left: 5px;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-link {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .social-link:hover {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            color: white;
+            transform: translateY(-3px);
+        }
+
+        .footer-divider {
+            border-color: rgba(255, 255, 255, 0.1);
+            margin: 40px 0 20px;
+        }
+
+        .copyright-text {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.85rem;
+        }
+
+        .credit-text {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+        }
+
+        .credit-link {
+            color: #a5b4fc;
+            text-decoration: none;
+            font-weight: 700;
+            transition: all 0.3s;
+        }
+
+        .credit-link:hover {
+            color: #c4b5fd;
+            text-shadow: 0 0 10px rgba(196, 181, 253, 0.5);
+        }
+    </style>
+
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
