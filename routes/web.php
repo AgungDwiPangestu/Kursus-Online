@@ -6,10 +6,22 @@ use App\Http\Controllers\KursusController;
 use App\Http\Controllers\PesertaController;
 use App\Models\Kursus;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 
 // Public routes (available for everyone, authenticated or not)
 Route::get('/', function () {
-    $kursus = Kursus::with('pengajar')->get();
+    $user = auth()->user();
+
+    // If user is pengajar, only show their own courses
+    if ($user && $user->isPengajar() && $user->pengajar) {
+        $kursus = Kursus::with('pengajar')
+            ->where('pengajar_id', $user->pengajar->id)
+            ->get();
+    } else {
+        // Admin and peserta see all courses
+        $kursus = Kursus::with('pengajar')->get();
+    }
+
     return view('welcome', compact('kursus'));
 })->name('home');
 
@@ -25,6 +37,14 @@ Route::get('/peserta/{peserta}', [PesertaController::class, 'show'])->name('pese
 
 // Dashboard (authenticated users only)
 Route::get('/dashboard', function () {
+    $user = Auth::user();
+
+    // Prepare data based on role
+    if ($user->isPengajar() && $user->pengajar) {
+        $myKursus = $user->pengajar->kursus()->with('enrollments.user')->get();
+        return view('dashboard', compact('myKursus'));
+    }
+
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
@@ -35,6 +55,9 @@ Route::middleware('auth')->group(function () {
 
     // Enrollment route (authenticated users can enroll)
     Route::post('/kursus/{kursus}/enroll', [KursusController::class, 'enroll'])->name('kursus.enroll');
+
+    // Pengajar can view peserta in their courses
+    Route::get('/kursus/{kursus}/peserta', [KursusController::class, 'peserta'])->name('kursus.peserta');
 });
 
 // Admin only routes (CRUD operations)
@@ -56,6 +79,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
     // Peserta CRUD (admin only)
     Route::get('/peserta/create', [PesertaController::class, 'create'])->name('peserta.create');
     Route::post('/peserta', [PesertaController::class, 'store'])->name('peserta.store');
+    Route::delete('/peserta/delete-all', [PesertaController::class, 'deleteAll'])->name('peserta.deleteAll');
     Route::get('/peserta/{peserta}/edit', [PesertaController::class, 'edit'])->name('peserta.edit');
     Route::put('/peserta/{peserta}', [PesertaController::class, 'update'])->name('peserta.update');
     Route::delete('/peserta/{peserta}', [PesertaController::class, 'destroy'])->name('peserta.destroy');
