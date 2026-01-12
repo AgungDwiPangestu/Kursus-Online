@@ -28,6 +28,9 @@ Aplikasi ini menerapkan **arsitektur MVC**, **Eloquent ORM**, dan **role-based a
 ### 👨‍🏫 Fitur Admin
 
 -   ✅ CRUD lengkap untuk Pengajar, Kursus, dan Peserta
+-   ✅ **Tambah Pengajar** → Otomatis buat akun user dengan role `pengajar`
+-   ✅ **Tambah Peserta** → Pilih user existing ATAU buat user baru
+-   ✅ **Tambah Kursus** → Pilih pengajar dari dropdown relasi
 -   ✅ Melihat statistik di dashboard
 -   ✅ Melihat semua data kursus dan enrollment
 
@@ -357,6 +360,42 @@ Setelah menjalankan `php artisan db:seed`, tersedia akun-akun berikut:
     - Menu Pengajar → CRUD lengkap
     - Menu Kursus → CRUD lengkap + lihat peserta
     - Menu Peserta → Lihat semua peserta (grouped by user)
+
+### Demo 1.5: Admin Menambah Pengajar Baru (FITUR BARU)
+
+1. Login sebagai admin
+2. Buka menu **Pengajar**
+3. Klik tombol **Tambah Pengajar**
+4. Isi form:
+    - Nama Pengajar: `Dr. Test Pengajar`
+    - Email: `test.pengajar@example.com`
+    - Password: `password123`
+    - Konfirmasi Password: `password123`
+    - Keahlian: `Artificial Intelligence`
+5. Klik **Simpan Pengajar**
+6. **Tunjukkan**:
+    - Pengajar baru muncul di daftar
+    - Akun user otomatis terbuat (bisa login dengan email tersebut)
+
+### Demo 1.6: Admin Menambah Kursus dengan Pilihan Pengajar
+
+1. Login sebagai admin
+2. Buka menu **Kursus**
+3. Klik tombol **Tambah Kursus**
+4. **Tunjukkan dropdown Pengajar** → Data dari tabel pengajar
+5. Pilih pengajar dan isi nama kursus + deskripsi
+6. Simpan → Kursus terhubung dengan pengajar
+
+### Demo 1.7: Admin Menambah Peserta ke Kursus
+
+1. Login sebagai admin
+2. Buka menu **Peserta**
+3. Klik tombol **Tambah Peserta**
+4. **Tunjukkan 2 opsi**:
+    - **User Existing**: Pilih dari dropdown user yang sudah ada
+    - **Buat User Baru**: Isi nama, email, password
+5. Pilih kursus dari dropdown
+6. Simpan → Peserta terdaftar + Enrollment otomatis dibuat
 
 ### Demo 2: Login sebagai Pengajar
 
