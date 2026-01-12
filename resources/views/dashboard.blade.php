@@ -6,6 +6,7 @@
 @php
 $user = Auth::user();
 $isPeserta = !$user->isAdmin() && !$user->isPengajar();
+$isPengajar = $user->isPengajar();
 
 if ($isPeserta) {
 $myEnrollments = $user->enrollments()->with('kursus.pengajar')->get();
@@ -13,6 +14,18 @@ $activeEnrollments = $myEnrollments->where('status', 'active');
 $completedEnrollments = $myEnrollments->where('status', 'completed');
 $certificates = $completedEnrollments->count();
 $allKursus = App\Models\Kursus::with('pengajar')->take(6)->get();
+} elseif ($isPengajar && $user->pengajar) {
+// Get pengajar's courses and statistics from the passed variable or load directly
+if (!isset($myKursus)) {
+$myKursus = $user->pengajar->kursus()->with('enrollments.user')->get();
+}
+$totalKursus = $myKursus->count();
+$totalPeserta = $myKursus->sum(function($kursus) {
+return $kursus->enrollments->count();
+});
+$activePeserta = $myKursus->sum(function($kursus) {
+return $kursus->enrollments->where('status', 'active')->count();
+});
 }
 @endphp
 
@@ -149,6 +162,103 @@ $allKursus = App\Models\Kursus::with('pengajar')->take(6)->get();
         @endif
     </div>
 </div>
+
+@elseif($isPengajar && $user->pengajar)
+<!-- Pengajar Dashboard -->
+<div class="welcome-card mb-4">
+    <h2 class="display-6 fw-bold mb-2">Selamat datang, {{ $user->name }}! 👨‍🏫</h2>
+    <p class="lead mb-0 opacity-75">Kelola kursus Anda dan pantau perkembangan peserta</p>
+</div>
+
+<!-- Pengajar Statistics Cards -->
+<div class="row g-4 mb-4">
+    <div class="col-md-4">
+        <div class="stat-card indigo">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <p class="text-uppercase small mb-1 opacity-75">Total Kursus</p>
+                    <h2 class="display-4 fw-bold mb-0">{{ $totalKursus }}</h2>
+                    <small class="opacity-75">Kursus yang diampu</small>
+                </div>
+                <div class="bg-white bg-opacity-25 rounded-3 p-3">
+                    <i class="bi bi-book fs-1"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-card green">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <p class="text-uppercase small mb-1 opacity-75">Total Peserta</p>
+                    <h2 class="display-4 fw-bold mb-0">{{ $totalPeserta }}</h2>
+                    <small class="opacity-75">Di semua kursus</small>
+                </div>
+                <div class="bg-white bg-opacity-25 rounded-3 p-3">
+                    <i class="bi bi-people fs-1"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-card orange">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <p class="text-uppercase small mb-1 opacity-75">Peserta Aktif</p>
+                    <h2 class="display-4 fw-bold mb-0">{{ $activePeserta }}</h2>
+                    <small class="opacity-75">Sedang belajar</small>
+                </div>
+                <div class="bg-white bg-opacity-25 rounded-3 p-3">
+                    <i class="bi bi-person-check fs-1"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- My Courses -->
+@if($myKursus->count() > 0)
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-header bg-white border-0 py-3">
+        <div class="d-flex justify-content-between align-items-center">
+            <h5 class="fw-bold mb-0">Kursus yang Diampu</h5>
+            <span class="badge bg-primary rounded-pill">{{ $myKursus->count() }} kursus</span>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="row g-3">
+            @foreach($myKursus as $kursus)
+            <div class="col-md-6">
+                <div class="course-card">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <div>
+                            <h6 class="fw-bold text-primary mb-1">{{ $kursus->nama_kursus }}</h6>
+                            <small class="text-muted">{{ Str::limit($kursus->deskripsi, 60) }}</small>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mt-3">
+                        <span class="badge bg-success">
+                            <i class="bi bi-people me-1"></i>{{ $kursus->enrollments->count() }} Peserta
+                        </span>
+                        <a href="{{ route('kursus.show', $kursus) }}" class="btn btn-sm btn-gradient">
+                            Lihat Detail →
+                        </a>
+                    </div>
+                </div>
+            </div>
+            @endforeach
+        </div>
+    </div>
+</div>
+@else
+<div class="card border-0 shadow-sm">
+    <div class="card-body text-center py-5">
+        <i class="bi bi-book text-muted" style="font-size: 4rem;"></i>
+        <h5 class="mt-3">Belum ada kursus</h5>
+        <p class="text-muted">Hubungi admin untuk menambahkan kursus yang Anda ampu</p>
+    </div>
+</div>
+@endif
 
 @else
 <!-- Admin/Pengajar Dashboard -->
