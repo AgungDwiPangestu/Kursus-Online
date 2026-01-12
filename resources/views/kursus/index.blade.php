@@ -99,7 +99,15 @@
                             <i class="bi bi-eye"></i> Detail
                         </a>
                         @auth
+                        @if(auth()->user()->isPengajar() && auth()->user()->pengajar && $item->pengajar_id == auth()->user()->pengajar->id)
+                        <a href="{{ route('kursus.peserta', $item) }}" class="btn btn-sm btn-success fw-semibold" style="border-radius: 10px; padding: 8px 20px;">
+                            <i class="bi bi-people"></i> Lihat Peserta
+                        </a>
+                        @endif
                         @if(auth()->user()->isAdmin())
+                        <a href="{{ route('kursus.peserta', $item) }}" class="btn btn-sm btn-success fw-semibold" style="border-radius: 10px; padding: 8px 20px;">
+                            <i class="bi bi-people"></i> Peserta
+                        </a>
                         <a href="{{ route('kursus.edit', $item) }}" class="btn btn-sm btn-warning fw-semibold" style="border-radius: 10px; padding: 8px 20px;">
                             <i class="bi bi-pencil"></i> Edit
                         </a>
