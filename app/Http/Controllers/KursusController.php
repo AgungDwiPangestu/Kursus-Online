@@ -14,7 +14,18 @@ class KursusController extends Controller
      */
     public function index()
     {
-        $kursus = Kursus::with('pengajar')->get();
+        $user = auth()->user();
+
+        // If user is pengajar, only show their own courses
+        if ($user && $user->isPengajar() && $user->pengajar) {
+            $kursus = Kursus::with('pengajar')
+                ->where('pengajar_id', $user->pengajar->id)
+                ->get();
+        } else {
+            // Admin and peserta see all courses
+            $kursus = Kursus::with('pengajar')->get();
+        }
+
         return view('kursus.index', compact('kursus'));
     }
 
@@ -129,5 +140,26 @@ class KursusController extends Controller
 
         return redirect()->back()
             ->with('success', 'Berhasil mendaftar kursus! Selamat belajar 🎉');
+    }
+
+    /**
+     * Display participants/peserta for a specific course (for pengajar)
+     */
+    public function peserta(Kursus $kursus)
+    {
+        $user = auth()->user();
+
+        // Only pengajar who owns this course or admin can see peserta
+        if (!$user->isAdmin()) {
+            if (!$user->isPengajar() || !$user->pengajar || $kursus->pengajar_id !== $user->pengajar->id) {
+                return redirect()->route('kursus.index')
+                    ->with('error', 'Anda tidak memiliki akses ke peserta kursus ini');
+            }
+        }
+
+        // Load enrollments with user data
+        $kursus->load(['enrollments.user', 'peserta']);
+
+        return view('kursus.peserta', compact('kursus'));
     }
 }
