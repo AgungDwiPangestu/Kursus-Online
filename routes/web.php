@@ -7,11 +7,11 @@ use App\Http\Controllers\PesertaController;
 use App\Models\Kursus;
 use Illuminate\Support\Facades\Route;
 
-// Public routes
+// Public routes (available for everyone, authenticated or not)
 Route::get('/', function () {
     $kursus = Kursus::with('pengajar')->get();
     return view('welcome', compact('kursus'));
-});
+})->name('home');
 
 // Public view routes (anyone can view)
 Route::get('/pengajar', [PengajarController::class, 'index'])->name('pengajar.index');

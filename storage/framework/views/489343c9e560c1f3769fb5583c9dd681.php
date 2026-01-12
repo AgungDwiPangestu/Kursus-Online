@@ -184,60 +184,61 @@
             </button>
             <div class="collapse navbar-collapse" id="mainNavbar">
                 <ul class="navbar-nav ms-auto align-items-center">
-                    @auth
-                    @if(Auth::user()->isAdmin())
+                    <?php if(auth()->guard()->check()): ?>
+                    <?php if(Auth::user()->isAdmin()): ?>
                     <li class="nav-item">
-                        <a class="nav-link nav-link-custom" href="{{ route('pengajar.index') }}">
+                        <a class="nav-link nav-link-custom" href="<?php echo e(route('pengajar.index')); ?>">
                             <i class="bi bi-person-badge"></i> Pengajar
                         </a>
                     </li>
-                    @endif
+                    <?php endif; ?>
                     <li class="nav-item">
-                        <a class="nav-link nav-link-custom" href="{{ route('kursus.index') }}">
+                        <a class="nav-link nav-link-custom" href="<?php echo e(route('kursus.index')); ?>">
                             <i class="bi bi-book"></i> Kursus
                         </a>
                     </li>
-                    @if(Auth::user()->isAdmin())
+                    <?php if(Auth::user()->isAdmin()): ?>
                     <li class="nav-item">
-                        <a class="nav-link nav-link-custom" href="{{ route('peserta.index') }}">
+                        <a class="nav-link nav-link-custom" href="<?php echo e(route('peserta.index')); ?>">
                             <i class="bi bi-people"></i> Peserta
                         </a>
                     </li>
-                    @endif
+                    <?php endif; ?>
                     <li class="nav-item">
-                        <a class="nav-link nav-link-custom" href="{{ route('dashboard') }}">
+                        <a class="nav-link nav-link-custom" href="<?php echo e(route('dashboard')); ?>">
                             <i class="bi bi-speedometer2"></i> Dashboard
                         </a>
                     </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link nav-link-custom dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                            <i class="bi bi-person-circle"></i> {{ Auth::user()->name }}
+                            <i class="bi bi-person-circle"></i> <?php echo e(Auth::user()->name); ?>
+
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" href="{{ route('profile.edit') }}">Profile</a></li>
+                            <li><a class="dropdown-item" href="<?php echo e(route('profile.edit')); ?>">Profile</a></li>
                             <li>
                                 <hr class="dropdown-divider">
                             </li>
                             <li>
-                                <form method="POST" action="{{ route('logout') }}">
-                                    @csrf
+                                <form method="POST" action="<?php echo e(route('logout')); ?>">
+                                    <?php echo csrf_field(); ?>
                                     <button type="submit" class="dropdown-item">Logout</button>
                                 </form>
                             </li>
                         </ul>
                     </li>
-                    @else
+                    <?php else: ?>
                     <li class="nav-item">
-                        <a class="nav-link nav-link-custom" href="{{ route('login') }}">
+                        <a class="nav-link nav-link-custom" href="<?php echo e(route('login')); ?>">
                             <i class="bi bi-box-arrow-in-right"></i> Login
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="btn btn-register" href="{{ route('register') }}">
+                        <a class="btn btn-register" href="<?php echo e(route('register')); ?>">
                             <i class="bi bi-person-plus"></i> Daftar
                         </a>
                     </li>
-                    @endauth
+                    <?php endif; ?>
                 </ul>
             </div>
         </div>
@@ -248,7 +249,7 @@
         <div class="container text-center">
             <h1 class="hero-title">🚀 Tingkatkan Skill Anda</h1>
             <p class="hero-subtitle">Pilih dari berbagai kursus programming yang disesuaikan dengan kebutuhan Anda</p>
-            <a href="{{ route('kursus.index') }}" class="btn btn-light btn-lg px-5 py-3 fw-bold" style="border-radius: 15px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);">
+            <a href="<?php echo e(route('kursus.index')); ?>" class="btn btn-light btn-lg px-5 py-3 fw-bold" style="border-radius: 15px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);">
                 <i class="bi bi-search"></i> Jelajahi Semua Kursus
             </a>
         </div>
@@ -261,39 +262,41 @@
             <p class="text-muted" style="font-size: 1.1rem; font-weight: 500;">Pelajari teknologi terkini dari instruktur berpengalaman</p>
         </div>
 
-        @if($kursus->count() > 0)
+        <?php if($kursus->count() > 0): ?>
         <div class="row g-4">
-            @foreach($kursus as $item)
+            <?php $__currentLoopData = $kursus; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
             <div class="col-md-6 col-lg-4">
                 <div class="card course-card">
                     <div class="course-header">
-                        <h3 class="course-title">{{ $item->nama_kursus }}</h3>
+                        <h3 class="course-title"><?php echo e($item->nama_kursus); ?></h3>
                         <div class="instructor-info">
-                            <i class="bi bi-person-circle"></i> {{ $item->pengajar->nama_pengajar }}
+                            <i class="bi bi-person-circle"></i> <?php echo e($item->pengajar->nama_pengajar); ?>
+
                         </div>
                     </div>
                     <div class="course-body">
-                        <p class="text-muted mb-3">{{ Str::limit($item->deskripsi, 150) }}</p>
+                        <p class="text-muted mb-3"><?php echo e(Str::limit($item->deskripsi, 150)); ?></p>
                         <div class="d-flex justify-content-between align-items-center">
                             <span class="badge-category">
-                                <i class="bi bi-tag-fill"></i> {{ $item->pengajar->keahlian }}
+                                <i class="bi bi-tag-fill"></i> <?php echo e($item->pengajar->keahlian); ?>
+
                             </span>
-                            <a href="{{ route('kursus.show', $item) }}" class="btn btn-sm btn-primary" style="background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%); border: none; border-radius: 10px;">
+                            <a href="<?php echo e(route('kursus.show', $item)); ?>" class="btn btn-sm btn-primary" style="background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%); border: none; border-radius: 10px;">
                                 Detail <i class="bi bi-arrow-right"></i>
                             </a>
                         </div>
                     </div>
                 </div>
             </div>
-            @endforeach
+            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
         </div>
-        @else
+        <?php else: ?>
         <div class="alert alert-info text-center">
             <i class="bi bi-info-circle"></i> Belum ada kursus tersedia.
             <br><br>
             <code>php artisan db:seed --class=KursusSeeder</code>
         </div>
-        @endif
+        <?php endif; ?>
     </div>
 
     <!-- Stats Section -->
@@ -306,21 +309,21 @@
                 <div class="col-md-4">
                     <div class="stat-item">
                         <i class="bi bi-book-fill" style="font-size: 3rem; color: #4f46e5;"></i>
-                        <div class="stat-number">{{ $kursus->count() }}</div>
+                        <div class="stat-number"><?php echo e($kursus->count()); ?></div>
                         <div class="stat-label">Kursus Tersedia</div>
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="stat-item">
                         <i class="bi bi-people-fill" style="font-size: 3rem; color: #10b981;"></i>
-                        <div class="stat-number">{{ $kursus->pluck('pengajar_id')->unique()->count() }}</div>
+                        <div class="stat-number"><?php echo e($kursus->pluck('pengajar_id')->unique()->count()); ?></div>
                         <div class="stat-label">Pengajar Ahli</div>
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="stat-item">
                         <i class="bi bi-person-check-fill" style="font-size: 3rem; color: #f59e0b;"></i>
-                        <div class="stat-number">{{ $kursus->sum(function($k) { return $k->peserta->count(); }) }}</div>
+                        <div class="stat-number"><?php echo e($kursus->sum(function($k) { return $k->peserta->count(); })); ?></div>
                         <div class="stat-label">Peserta Aktif</div>
                     </div>
                 </div>
@@ -338,4 +341,4 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
-</html>
+</html><?php /**PATH C:\Users\ASUS\Documents\UTDI\Semester 5\Teknologi Framework\Pertemuan 14\sistem-manajemen-kursus-online\resources\views/welcome.blade.php ENDPATH**/ ?>

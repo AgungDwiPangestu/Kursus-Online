@@ -1,8 +1,8 @@
-@extends('layouts.public')
 
-@section('title', 'Daftar Kursus')
 
-@section('content')
+<?php $__env->startSection('title', 'Daftar Kursus'); ?>
+
+<?php $__env->startSection('content'); ?>
 <style>
     .page-header {
         background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #ec4899 100%);
@@ -69,61 +69,63 @@
                 <h1 class="fw-bold mb-2" style="font-size: 2.5rem; text-shadow: 2px 4px 8px rgba(0,0,0,0.2);">📚 Daftar Kursus</h1>
                 <p class="mb-0" style="font-size: 1.1rem; opacity: 0.9;">Pilih kursus terbaik untuk meningkatkan skill Anda</p>
             </div>
-            @auth
-            @if(auth()->user()->isAdmin())
-            <a href="{{ route('kursus.create') }}" class="btn btn-light btn-lg fw-bold" style="border-radius: 15px; padding: 12px 30px; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
+            <?php if(auth()->guard()->check()): ?>
+            <?php if(auth()->user()->isAdmin()): ?>
+            <a href="<?php echo e(route('kursus.create')); ?>" class="btn btn-light btn-lg fw-bold" style="border-radius: 15px; padding: 12px 30px; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
                 <i class="bi bi-plus-circle"></i> Tambah Kursus
             </a>
-            @endif
-            @endauth
+            <?php endif; ?>
+            <?php endif; ?>
         </div>
     </div>
 </div>
 
 <div class="container">
-    @if($kursus->count() > 0)
+    <?php if($kursus->count() > 0): ?>
     <div class="row g-4">
-        @foreach($kursus as $item)
+        <?php $__currentLoopData = $kursus; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
         <div class="col-md-6 col-lg-4">
             <div class="course-grid-card">
                 <div class="course-grid-header">
-                    <h3 class="fw-bold mb-2" style="font-size: 1.4rem; position: relative; z-index: 1;">{{ $item->nama_kursus }}</h3>
+                    <h3 class="fw-bold mb-2" style="font-size: 1.4rem; position: relative; z-index: 1;"><?php echo e($item->nama_kursus); ?></h3>
                     <p class="mb-0" style="opacity: 0.95; position: relative; z-index: 1;">
-                        <i class="bi bi-person-badge"></i> {{ $item->pengajar->nama_pengajar }}
+                        <i class="bi bi-person-badge"></i> <?php echo e($item->pengajar->nama_pengajar); ?>
+
                     </p>
                 </div>
                 <div class="p-4">
-                    <p class="text-muted mb-4" style="line-height: 1.6;">{{ Str::limit($item->deskripsi, 120) }}</p>
+                    <p class="text-muted mb-4" style="line-height: 1.6;"><?php echo e(Str::limit($item->deskripsi, 120)); ?></p>
                     <div class="d-flex gap-2 flex-wrap">
-                        <a href="{{ route('kursus.show', $item) }}" class="btn btn-sm" style="background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%); color: white; font-weight: 600; border-radius: 10px; padding: 8px 20px;">
+                        <a href="<?php echo e(route('kursus.show', $item)); ?>" class="btn btn-sm" style="background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%); color: white; font-weight: 600; border-radius: 10px; padding: 8px 20px;">
                             <i class="bi bi-eye"></i> Detail
                         </a>
-                        @auth
-                        @if(auth()->user()->isAdmin())
-                        <a href="{{ route('kursus.edit', $item) }}" class="btn btn-sm btn-warning fw-semibold" style="border-radius: 10px; padding: 8px 20px;">
+                        <?php if(auth()->guard()->check()): ?>
+                        <?php if(auth()->user()->isAdmin()): ?>
+                        <a href="<?php echo e(route('kursus.edit', $item)); ?>" class="btn btn-sm btn-warning fw-semibold" style="border-radius: 10px; padding: 8px 20px;">
                             <i class="bi bi-pencil"></i> Edit
                         </a>
-                        <form action="{{ route('kursus.destroy', $item) }}" method="POST" class="d-inline">
-                            @csrf
-                            @method('DELETE')
+                        <form action="<?php echo e(route('kursus.destroy', $item)); ?>" method="POST" class="d-inline">
+                            <?php echo csrf_field(); ?>
+                            <?php echo method_field('DELETE'); ?>
                             <button type="submit" class="btn btn-sm btn-danger fw-semibold" style="border-radius: 10px; padding: 8px 20px;"
                                 onclick="return confirm('Yakin ingin menghapus kursus ini?')">
                                 <i class="bi bi-trash"></i> Hapus
                             </button>
                         </form>
-                        @endif
-                        @endauth
+                        <?php endif; ?>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
         </div>
-        @endforeach
+        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
     </div>
-    @else
+    <?php else: ?>
     <div class="text-center py-5">
         <div style="font-size: 4rem; opacity: 0.3;">📚</div>
         <h3 class="text-muted mt-3">Belum ada data kursus</h3>
     </div>
-    @endif
+    <?php endif; ?>
 </div>
-@endsection
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('layouts.public', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\Users\ASUS\Documents\UTDI\Semester 5\Teknologi Framework\Pertemuan 14\sistem-manajemen-kursus-online\resources\views/kursus/index.blade.php ENDPATH**/ ?>

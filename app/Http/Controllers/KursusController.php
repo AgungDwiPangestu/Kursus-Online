@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Kursus;
 use App\Models\Pengajar;
+use App\Models\Peserta;
 use Illuminate\Http\Request;
 
 class KursusController extends Controller
@@ -117,6 +118,13 @@ class KursusController extends Controller
             'user_id' => $user->id,
             'status' => 'active',
             'tanggal_daftar' => now(),
+        ]);
+
+        // Also add to peserta table for admin view
+        Peserta::create([
+            'kursus_id' => $kursus->id,
+            'nama_peserta' => $user->name,
+            'email' => $user->email,
         ]);
 
         return redirect()->back()

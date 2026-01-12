@@ -4,8 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'Kursus Online')</title>
+    <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
+    <title><?php echo $__env->yieldContent('title', 'Kursus Online'); ?></title>
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -78,7 +78,7 @@
         }
     </style>
 
-    @yield('styles')
+    <?php echo $__env->yieldContent('styles'); ?>
 </head>
 
 <body>
@@ -93,60 +93,61 @@
             </button>
             <div class="collapse navbar-collapse" id="mainNavbar">
                 <ul class="navbar-nav ms-auto align-items-center">
-                    @auth
-                    @if(Auth::user()->isAdmin())
+                    <?php if(auth()->guard()->check()): ?>
+                    <?php if(Auth::user()->isAdmin()): ?>
                     <li class="nav-item">
-                        <a class="nav-link nav-link-custom" href="{{ route('pengajar.index') }}">
+                        <a class="nav-link nav-link-custom" href="<?php echo e(route('pengajar.index')); ?>">
                             <i class="bi bi-person-badge"></i> Pengajar
                         </a>
                     </li>
-                    @endif
+                    <?php endif; ?>
                     <li class="nav-item">
-                        <a class="nav-link nav-link-custom" href="{{ route('kursus.index') }}">
+                        <a class="nav-link nav-link-custom" href="<?php echo e(route('kursus.index')); ?>">
                             <i class="bi bi-book"></i> Kursus
                         </a>
                     </li>
-                    @if(Auth::user()->isAdmin())
+                    <?php if(Auth::user()->isAdmin()): ?>
                     <li class="nav-item">
-                        <a class="nav-link nav-link-custom" href="{{ route('peserta.index') }}">
+                        <a class="nav-link nav-link-custom" href="<?php echo e(route('peserta.index')); ?>">
                             <i class="bi bi-people"></i> Peserta
                         </a>
                     </li>
-                    @endif
+                    <?php endif; ?>
                     <li class="nav-item">
-                        <a class="nav-link nav-link-custom" href="{{ route('dashboard') }}">
+                        <a class="nav-link nav-link-custom" href="<?php echo e(route('dashboard')); ?>">
                             <i class="bi bi-speedometer2"></i> Dashboard
                         </a>
                     </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link nav-link-custom dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                            <i class="bi bi-person-circle"></i> {{ Auth::user()->name }}
+                            <i class="bi bi-person-circle"></i> <?php echo e(Auth::user()->name); ?>
+
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" href="{{ route('profile.edit') }}">Profile</a></li>
+                            <li><a class="dropdown-item" href="<?php echo e(route('profile.edit')); ?>">Profile</a></li>
                             <li>
                                 <hr class="dropdown-divider">
                             </li>
                             <li>
-                                <form method="POST" action="{{ route('logout') }}">
-                                    @csrf
+                                <form method="POST" action="<?php echo e(route('logout')); ?>">
+                                    <?php echo csrf_field(); ?>
                                     <button type="submit" class="dropdown-item">Logout</button>
                                 </form>
                             </li>
                         </ul>
                     </li>
-                    @else
+                    <?php else: ?>
                     <li class="nav-item">
-                        <a class="nav-link nav-link-custom" href="{{ route('login') }}">
+                        <a class="nav-link nav-link-custom" href="<?php echo e(route('login')); ?>">
                             <i class="bi bi-box-arrow-in-right"></i> Login
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="btn btn-register" href="{{ route('register') }}">
+                        <a class="btn btn-register" href="<?php echo e(route('register')); ?>">
                             <i class="bi bi-person-plus"></i> Daftar
                         </a>
                     </li>
-                    @endauth
+                    <?php endif; ?>
                 </ul>
             </div>
         </div>
@@ -154,27 +155,29 @@
 
     <!-- Content -->
     <div class="container py-4">
-        @if(session('success'))
+        <?php if(session('success')): ?>
         <div class="alert alert-success alert-dismissible fade show" role="alert">
-            {{ session('success') }}
+            <?php echo e(session('success')); ?>
+
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
-        @endif
+        <?php endif; ?>
 
-        @if(session('error'))
+        <?php if(session('error')): ?>
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            {{ session('error') }}
+            <?php echo e(session('error')); ?>
+
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
-        @endif
+        <?php endif; ?>
 
-        @yield('content')
+        <?php echo $__env->yieldContent('content'); ?>
     </div>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-    @yield('scripts')
+    <?php echo $__env->yieldContent('scripts'); ?>
 </body>
 
-</html>
+</html><?php /**PATH C:\Users\ASUS\Documents\UTDI\Semester 5\Teknologi Framework\Pertemuan 14\sistem-manajemen-kursus-online\resources\views/layouts/public.blade.php ENDPATH**/ ?>

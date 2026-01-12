@@ -42,4 +42,50 @@ class PesertaController extends Controller
         return redirect()->route('peserta.index')
             ->with('success', 'Peserta berhasil ditambahkan');
     }
+
+    /**
+     * Display the specified resource.
+     */
+    public function show(Peserta $peserta)
+    {
+        $peserta->load('kursus');
+        return view('peserta.show', compact('peserta'));
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(Peserta $peserta)
+    {
+        $kursus = Kursus::all();
+        return view('peserta.edit', compact('peserta', 'kursus'));
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, Peserta $peserta)
+    {
+        $validated = $request->validate([
+            'kursus_id' => 'required|exists:kursus,id',
+            'nama_peserta' => 'required|string|max:255',
+            'email' => 'required|email'
+        ]);
+
+        $peserta->update($validated);
+
+        return redirect()->route('peserta.index')
+            ->with('success', 'Peserta berhasil diperbarui');
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(Peserta $peserta)
+    {
+        $peserta->delete();
+
+        return redirect()->route('peserta.index')
+            ->with('success', 'Peserta berhasil dihapus');
+    }
 }

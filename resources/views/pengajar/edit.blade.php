@@ -1,15 +1,50 @@
-@extends('layouts.app')
+@extends('layouts.public')
 
 @section('title', 'Edit Pengajar')
+
+@section('styles')
+<style>
+    .form-card {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+    }
+
+    .form-header {
+        background: linear-gradient(135deg, #10b981 0%, #059669 50%, #047857 100%);
+        color: white;
+        padding: 30px;
+    }
+
+    .form-body {
+        padding: 40px;
+    }
+
+    .btn-gradient {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        border: none;
+        color: white;
+        padding: 12px 30px;
+        border-radius: 10px;
+        font-weight: 600;
+    }
+
+    .btn-gradient:hover {
+        background: linear-gradient(135deg, #059669 0%, #047857 100%);
+        color: white;
+    }
+</style>
+@endsection
 
 @section('content')
 <div class="row justify-content-center">
     <div class="col-md-8">
-        <div class="card">
-            <div class="card-header">
-                <h4>Edit Pengajar</h4>
+        <div class="form-card">
+            <div class="form-header">
+                <h4 class="mb-0 fw-bold"><i class="bi bi-pencil-square me-2"></i>Edit Pengajar</h4>
             </div>
-            <div class="card-body">
+            <div class="form-body">
                 <form action="{{ route('pengajar.update', $pengajar) }}" method="POST">
                     @csrf
                     @method('PUT')
@@ -43,7 +78,9 @@
                     </div>
 
                     <div class="d-flex gap-2">
-                        <button type="submit" class="btn btn-primary">Update</button>
+                        <button type="submit" class="btn btn-gradient">
+                            <i class="bi bi-check-lg me-2"></i>Update
+                        </button>
                         <a href="{{ route('pengajar.index') }}" class="btn btn-secondary">Batal</a>
                     </div>
                 </form>
