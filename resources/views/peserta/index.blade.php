@@ -91,36 +91,38 @@
             <div class="student-card">
                 <div class="student-header">
                     <div class="student-avatar">
-                        {{ strtoupper(substr($peserta->nama_peserta, 0, 1)) }}
+                        {{ strtoupper(substr($peserta['nama_peserta'], 0, 1)) }}
                     </div>
-                    <h3 class="fw-bold text-white mb-1" style="font-size: 1.4rem;">{{ $peserta->nama_peserta }}</h3>
+                    <h3 class="fw-bold text-white mb-1" style="font-size: 1.4rem;">{{ $peserta['nama_peserta'] }}</h3>
                 </div>
                 <div class="p-4">
                     <div class="mb-3">
                         <div class="text-muted small mb-1">EMAIL</div>
-                        <div class="fw-semibold"><i class="bi bi-envelope"></i> {{ $peserta->email }}</div>
+                        <div class="fw-semibold"><i class="bi bi-envelope"></i> {{ $peserta['email'] }}</div>
                     </div>
-                    <div class="mb-4">
-                        <div class="text-muted small mb-1">KURSUS</div>
-                        <div class="fw-semibold"><i class="bi bi-book"></i> {{ $peserta->kursus->nama_kursus ?? 'Tidak ada' }}</div>
+                    <div class="mb-3">
+                        <div class="text-muted small mb-1">KURSUS DIIKUTI</div>
+                        <div class="badge bg-primary rounded-pill mb-2">{{ $peserta['kursus_list']->count() }} Kursus</div>
+                        @if($peserta['kursus_list']->count() > 0)
+                        <div class="mt-2">
+                            @foreach($peserta['kursus_list'] as $kursus)
+                            <div class="d-flex align-items-center mb-2 p-2" style="background: #f3f4f6; border-radius: 8px;">
+                                <i class="bi bi-book-fill text-primary me-2"></i>
+                                <span class="small">{{ $kursus->nama_kursus }}</span>
+                            </div>
+                            @endforeach
+                        </div>
+                        @else
+                        <div class="text-muted small">Tidak ada kursus</div>
+                        @endif
                     </div>
                     @auth
                     @if(auth()->user()->isAdmin())
-                    <div class="d-flex gap-2 flex-wrap">
-                        <a href="{{ route('peserta.show', $peserta) }}" class="btn btn-sm" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: white; font-weight: 600; border-radius: 10px; padding: 8px 20px;">
-                            <i class="bi bi-eye"></i> Detail
-                        </a>
-                        <a href="{{ route('peserta.edit', $peserta) }}" class="btn btn-sm btn-warning fw-semibold" style="border-radius: 10px; padding: 8px 20px;">
-                            <i class="bi bi-pencil"></i> Edit
-                        </a>
-                        <form action="{{ route('peserta.destroy', $peserta) }}" method="POST" class="d-inline">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-sm btn-danger fw-semibold" style="border-radius: 10px; padding: 8px 20px;"
-                                onclick="return confirm('Yakin ingin menghapus peserta ini?')">
-                                <i class="bi bi-trash"></i> Hapus
-                            </button>
-                        </form>
+                    <div class="d-flex gap-2 flex-wrap mt-3">
+                        <button type="button" class="btn btn-sm btn-danger fw-semibold" style="border-radius: 10px; padding: 8px 20px;"
+                            onclick="deleteAllEnrollments('{{ $peserta['email'] }}', {{ json_encode($peserta['peserta_ids']) }})">
+                            <i class="bi bi-trash"></i> Hapus Semua
+                        </button>
                     </div>
                     @endif
                     @endauth
@@ -137,4 +139,35 @@
     </div>
     @endif
 </div>
+
+@auth
+@if(auth()->user()->isAdmin())
+<form id="deleteAllForm" method="POST" style="display: none;">
+    @csrf
+    @method('DELETE')
+</form>
+
+<script>
+    function deleteAllEnrollments(email, pesertaIds) {
+        if (!confirm(`Yakin ingin menghapus semua pendaftaran kursus untuk ${email}?`)) {
+            return;
+        }
+
+        const form = document.getElementById('deleteAllForm');
+        form.action = '{{ route("peserta.index") }}/delete-all';
+
+        // Add peserta IDs as hidden inputs
+        pesertaIds.forEach(id => {
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'peserta_ids[]';
+            input.value = id;
+            form.appendChild(input);
+        });
+
+        form.submit();
+    }
+</script>
+@endif
+@endauth
 @endsection

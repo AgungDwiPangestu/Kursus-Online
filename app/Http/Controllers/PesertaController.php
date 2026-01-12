@@ -13,7 +13,20 @@ class PesertaController extends Controller
      */
     public function index()
     {
-        $pesertas = Peserta::with('kursus')->get();
+        // Group peserta by email to show one card per user with all their courses
+        $pesertas = Peserta::with('kursus')
+            ->get()
+            ->groupBy('email')
+            ->map(function ($group) {
+                return [
+                    'nama_peserta' => $group->first()->nama_peserta,
+                    'email' => $group->first()->email,
+                    'kursus_list' => $group->pluck('kursus')->filter(),
+                    'peserta_ids' => $group->pluck('id'),
+                    'created_at' => $group->first()->created_at,
+                ];
+            });
+
         return view('peserta.index', compact('pesertas'));
     }
 
@@ -87,5 +100,23 @@ class PesertaController extends Controller
 
         return redirect()->route('peserta.index')
             ->with('success', 'Peserta berhasil dihapus');
+    }
+
+    /**
+     * Remove all enrollments for a user.
+     */
+    public function deleteAll(Request $request)
+    {
+        $pesertaIds = $request->input('peserta_ids', []);
+
+        if (empty($pesertaIds)) {
+            return redirect()->route('peserta.index')
+                ->with('error', 'Tidak ada data yang dihapus');
+        }
+
+        Peserta::whereIn('id', $pesertaIds)->delete();
+
+        return redirect()->route('peserta.index')
+            ->with('success', 'Semua pendaftaran kursus berhasil dihapus');
     }
 }
