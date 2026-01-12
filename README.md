@@ -72,25 +72,25 @@ Aplikasi ini menerapkan **arsitektur MVC**, **Eloquent ORM**, dan **role-based a
 ### Entity Relationship Diagram (ERD)
 
 ```
-┌─────────────┐       ┌─────────────┐       ┌─────────────┐
-│   USERS     │       │  PENGAJAR   │       │   KURSUS    │
-├─────────────┤       ├─────────────┤       ├─────────────┤
-│ id          │◄──────│ user_id     │       │ id          │
-│ name        │       │ id          │◄──────│ pengajar_id │
-│ email       │       │ nama_pengajar│      │ nama_kursus │
-│ password    │       │ email       │       │ deskripsi   │
-│ role        │       │ keahlian    │       └──────┬──────┘
-└─────────────┘       └─────────────┘              │
-      │                                            │
-      │         ┌─────────────┐                    │
-      │         │ ENROLLMENTS │                    │
-      │         ├─────────────┤                    │
-      └────────►│ user_id     │                    │
-                │ kursus_id   │◄───────────────────┘
-                │ status      │
-                │ tanggal_daftar│
-                │ tanggal_selesai│
-                └─────────────┘
+┌─────────────┐       ┌──────────────┐       ┌─────────────┐
+│   USERS     │       │  PENGAJAR    │       │   KURSUS    │
+├─────────────┤       ├──────────────┤       ├─────────────┤
+│ id          │◄──────│ user_id      │       │ id          │
+│ name        │       │ id           │◄──────│ pengajar_id │
+│ email       │       │ nama_pengajar│       │ nama_kursus │
+│ password    │       │ email        │       │ deskripsi   │
+│ role        │       │ keahlian     │       └──────┬──────┘
+└─────────────┘       └──────────────┘              │
+      │                                             │
+      │         ┌─────────────────┐                 │
+      │         │ ENROLLMENTS     │                 │
+      │         ├─────────────────┤                 │
+      └────────►│ user_id         │                 │
+                │ kursus_id       │◄────────────────┘
+                │ status          │
+                │ tanggal_daftar  │
+                │ tanggal_selesai │
+                └─────────────────┘
                        │
                        ▼
               ┌─────────────┐
