@@ -14,6 +14,7 @@ class KursusController extends Controller
      */
     public function index()
     {
+        /** @var \App\Models\User|null $user */
         $user = auth()->user();
 
         // If user is pengajar, only show their own courses
@@ -106,6 +107,7 @@ class KursusController extends Controller
      */
     public function enroll(Kursus $kursus)
     {
+        /** @var \App\Models\User $user */
         $user = auth()->user();
 
         // Check if user is admin
@@ -147,6 +149,7 @@ class KursusController extends Controller
      */
     public function peserta(Kursus $kursus)
     {
+        /** @var \App\Models\User $user */
         $user = auth()->user();
 
         // Only pengajar who owns this course or admin can see peserta

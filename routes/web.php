@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 
 // Public routes (available for everyone, authenticated or not)
 Route::get('/', function () {
+    /** @var \App\Models\User|null $user */
     $user = auth()->user();
 
     // If user is pengajar, only show their own courses
@@ -37,6 +38,7 @@ Route::get('/peserta/{peserta}', [PesertaController::class, 'show'])->name('pese
 
 // Dashboard (authenticated users only)
 Route::get('/dashboard', function () {
+    /** @var \App\Models\User $user */
     $user = Auth::user();
 
     // Prepare data based on role
